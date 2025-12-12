@@ -1,7 +1,7 @@
-// File: build.gradle.kts
+// File: xrphone/build.gradle.kts
 plugins {
-    id("com.android.library")
-    kotlin("android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -26,12 +26,16 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isMinifyEnabled = false
+            matchingFallbacks += listOf("release")
         }
     }
 
@@ -48,22 +52,28 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.7.0"
     }
+
+    packaging {
+        resources {
+            excludes += listOf("META-INF/LICENSE*", "META-INF/NOTICE*")
+        }
+    }
 }
 
 dependencies {
-    // Core Kotlin and Android
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    // === Core Kotlin/Android ===
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.coroutines.android)
 
-    // Jetpack XR / Compose XR integration
-    implementation("androidx.xr:xr-core:1.0.0-alpha01")
-    implementation("androidx.xr:xr-compose:1.0.0-alpha01")
+    // === Jetpack XR / Compose XR (Android XR SDK integration) ===
+    implementation(libs.xr.core)
+    implementation(libs.xr.compose)
 
-    // Networking stack
-    implementation("org.java-websocket:Java-WebSocket:1.5.6")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    // === Network / InfraNet stack ===
+    implementation(libs.java.websocket)
+    implementation(libs.okhttp)
 
-    // Serialization and data handling
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    // === Serialization & Data Layer ===
+    implementation(libs.serialization.json)
 }
